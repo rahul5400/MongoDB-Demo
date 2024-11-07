@@ -77,6 +77,10 @@ public class MainController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved data"),
+            @ApiResponse(responseCode = "500", description = "Error in retrieval")
+    })
     @GetMapping(path = "/findAllOver21")
     public ResponseEntity<List<Map<String, Object>>> findAllOver21() {
         try {

@@ -2,8 +2,10 @@ package edu.udel.cisc.cisc437.services;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,5 +60,38 @@ public class DatabaseService {
 
     public List<Map<String, Object>> findAllOver21() {
         return findAllWithFilter(gt("age", 21));
+    }
+
+    public String create(Map<String, Object> user) {
+        Document persistedUser = new Document();
+        for(var entry : user.entrySet()) {
+            persistedUser.append(entry.getKey(), entry.getValue());
+        }
+        InsertOneResult res = users.insertOne(persistedUser);
+
+        if(res.getInsertedId() != null) persistedUser.append("_id", res.getInsertedId());
+        return persistedUser.toJson();
+    }
+
+    public String read(String id) {
+        Document user = users.find(eq("_id", new ObjectId(id))).first();
+        if(user == null) return "{}";
+        return user.toJson();
+    }
+
+    public boolean update(String id, Map<String, Object> user) {
+        Document updatedUser = new Document();
+        for(var entry : user.entrySet()) {
+            updatedUser.append(entry.getKey(), entry.getValue());
+        }
+        ObjectId objectId = new ObjectId(id);
+        updatedUser.append("_id", objectId);
+        long count = users.replaceOne(eq("_id", objectId), updatedUser).getMatchedCount();
+        return count > 0;
+    }
+
+    public boolean delete(String id) {
+        long count = users.deleteOne(eq("_id", new ObjectId(id))).getDeletedCount();
+        return count > 0;
     }
 }
