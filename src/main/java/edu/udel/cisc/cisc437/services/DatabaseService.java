@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gt;
 
 @Service
 public class DatabaseService {
@@ -53,5 +54,9 @@ public class DatabaseService {
 
     public List<Map<String, Object>> findAllByClub(String clubName) {
         return findAllWithFilter(eq("club_name", clubName));
+    }
+
+    public List<Map<String, Object>> findAllOver21() {
+        return findAllWithFilter(gt("age", 21));
     }
 }

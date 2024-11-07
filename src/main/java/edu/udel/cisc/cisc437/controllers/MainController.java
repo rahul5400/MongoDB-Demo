@@ -77,6 +77,17 @@ public class MainController {
         }
     }
 
+    @GetMapping(path = "/findAllOver21")
+    public ResponseEntity<List<Map<String, Object>>> findAllOver21() {
+        try {
+            List<Map<String, Object>> users = databaseService.findAllOver21();
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(List.of(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Successfully deleted all data"),
         @ApiResponse(responseCode = "500", description = "Error in deletion")
